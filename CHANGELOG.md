@@ -1,3 +1,8 @@
+mail-parser 0.11.2
+================================
+- Do not return invalid mime parts when parsing broken nested messages.
+- Fix broken receive header date parsing when tab is used in long header syntax (#130)
+
 mail-parser 0.11.1
 ================================
 - Fix `DateTime::from_timestamp` to handle negative timestamps correctly.

@@ -454,8 +454,10 @@ impl MessageParser {
 
                         if let Some(part) = message.parts.get_mut(state.part_id as usize) {
                             // Add headers and substructure to parent part
-                            part.body =
-                                PartType::Multipart(std::mem::take(&mut state.sub_part_ids));
+                            if state.sub_part_ids.len() != 1 || state.sub_part_ids[0] != 0 {
+                                part.body =
+                                    PartType::Multipart(std::mem::take(&mut state.sub_part_ids));
+                            }
 
                             // Restore ancestor's state
                             if let Some((prev_state, _)) = state_stack.pop() {
@@ -504,7 +506,9 @@ impl MessageParser {
                 message = prev_message;
             } else if let Some(part) = message.parts.get_mut(state.part_id as usize) {
                 part.offset_end = stream.offset() as u32;
-                part.body = PartType::Multipart(state.sub_part_ids);
+                if state.sub_part_ids.len() != 1 || state.sub_part_ids[0] != 0 {
+                    part.body = PartType::Multipart(state.sub_part_ids);
+                }
             } else {
                 debug_assert!(false, "This should not have happened.");
             }
